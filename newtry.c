@@ -4,59 +4,70 @@
 #include<string.h>
 #include<stdlib.h>
 #include<ctype.h>
+
+
 // FUNCTION DECLARATIONS
 int find( char* str);
 void initallocator();
 char* puncrmv (char *str);
-char *result;
+char *result();
 char* UPPER(char *str);
 int keyword(char* input, char *wrd);
 void categorize(char* input);
 void analyze(inputb *que[qi]);
 void stack();
 void filewriter();
+void filereader();
+
 // GLOBALS DECL
 int qi;
-enum keytyp {obj,action,que,sys,usr,connect,negate,join};
-typedef struct {
+enum keytyp { OBJ , ACTION ,EMO, QUE , SYS , USR , CONNECT , NEGATE , JOIN};
+
+/*typedef struct {
 	char *assoc;
-}as;
-typedef struct {
+}as;*/
+
+typedef struct {	//for the stored questions and answers.
 	char *input;
 	char *responses[MAX_RESP];
 	int lind;
 	int val;
 	enum keytyp *pat;
-	as **asso;
-}io;	
-typedef struct
-{
-enum keytyp *pat;
-node* n;
-int val;
-inputb *next;
+	node *asso;
+}io;
+
+typedef struct{
+	enum keytyp *pat;
+	node* n;
+	int val;
+	inputb *next;
 }inputb;
 inputb *que;
+
 int arr[8]={0,0,0,0,0,0,0,0};
-//TO BE REMOVED 
+
 typedef struct {// this will be used in both context.. for stored data too 
-char * key;
-enum keytyp type;
-node* ptr;
+	char * key;
+	enum keytyp type;
+	node* ptr;
 } node;
+
+
 //FUNCTIONS START
-int keyword(char* input, char *wrd)// do it using word by word scanning from beginning itself
-{ 	static int i;int c=0;
-	wrd= (char *) malloc(10);// can improve memory management by mallocing and reallocing where required
+int keyword(char* input, char *wrd)// do it using word by word scanning from beginning itself// or use strtok for this
+{ 	
+	static int i = 0;
+	int c = 0;
+	wrd = (char *) malloc(10);// can improve memory management by mallocing and reallocing where required
 	int prev;
-	for(;i<strlen(input);i++)
-	{	if(input[i]==' ')
+	for(;i < strlen(input); i++)
+	{	if(input[i] == ' ')
 			{
-			wrd[c]='\0'; c++;
-			reutrn 0;
+			wrd[c] ='\0'; c++;
+			return 0;
 		}
 		else {
-			wrd[c]= input[i]; c++;
+			wrd[c] = input[i]; c++;
 		}
 
 	}
@@ -66,9 +77,9 @@ int keyword(char* input, char *wrd)// do it using word by word scanning from beg
 				
 void categorize(char* input)
 {
-	char *str,cat;
-	int c,d;
-	static int e=0;
+	char *str, cat;
+	int c, d;
+	static int e = 0;
 	// is realloc syntax right?:
 	que[qi].n[que[qi].val]= (node * )realloc(n,sizeof(node*));
 	que[qi].n[que[qi].val].ptr= NULL;
@@ -102,35 +113,38 @@ void categorize(char* input)
 info* analyze() {	
 	info tmp;
 	// CAN USE CONTEXT SEARCH WITH 
-	FILE fp=fopen("strctdata.txt","r");
+	FILE fp = fopen("strctdata.txt","r");
 	
 	// depends on how the questions are stored ... handles sall the situations to chack whether an answer is to that set.
-	int i;  char *str,char *pat/*pattern of particular statement stored in database*/; 
+	int i; 
+       	char *str, *pat/*pattern of particular statement stored in database*/; 
 	
 	for(i=0;i<count;i++)// check for count variable
-		{	
+	{	
 		tmp
 		fread(&tmp, sizeof(info),fp);				
 		//read file for pattern part parti
-	for(j=0;j<que[qi].val;j++)
+		for(j=0;j<que[qi].val;j++)
 		{
-		if( )// char presence in the sentence.. and checking if objects of the sentence are the same. and where the negation is present.GO in order of 
+			if( )// char presence in the sentence.. and checking if objects of the sentence are the same. and where the negation is present.GO in order of 
 		//GO IN ORDER OF OBJECTS, ACTIONS, QUESTIONS, SYS, USR.
 		
 		}
 	}
 	for( i=0; i<)
-	 return //pointer to info that has correct question.
+	return //pointer to info that has correct question.
 }
 int output( char* str)
-	{int c=2, n,i;
+{
+	int c=2, n,i;
 	char ch;
-	info ,*tmp= analyze();
+	info *tmp;
+	tmp = analyze();
 	if (tmp!= NULL){
-		c=0	;
-		n=rand()%info[i]->val;
-		if(info[i]->val > 1)	{	
-				if(n==info[i]->lind)// to prevent output responses from repeating 
+		c = 0;
+		n = rand()%info[i]->val;
+		if(info[i].val > 1)	{	
+				if(n==info[i].lind)// to prevent output responses from repeating 
 					{	
 					n=(n+1)%info[i].val; info[i].lind= n;
 				}
@@ -153,9 +167,9 @@ int output( char* str)
 			}
 			
 	}
-	return c;
+return c;
 }
-void ()
+
 	
 void stack()
 {
@@ -163,30 +177,38 @@ void stack()
 	for(i)
 }
 void filewriter()
-{ char *str;int c,d,f;
+{ 
+	char *str;
+	int c,d,f;
 	io tmp;
-	FILE *fp= fopen("structdata.txt", "w+iki");
+	FILE *fp= fopen("structdata.txt", "w+");
 	printf("Enter /e at end of total input and /r to end response earlier than 3. "); 
 	while (1){	
-	printf("Please enter data to be entered");// how to show end of input ?
-	gets(tmp.input);// read through all input methods 
-	if(!strcmp("/e",tmp)){
-	for(i=0;i<3;i++)
-	{
-		gets(tmp.resposes[i]);	
-		if(strcmp(tmp.responses[i], "/r")==0)
-			break;
-	}
-	tmp.val=i;
-	printf("Next value");
+		printf("Please enter data to be entered");// how to show end of input ?
+		gets(tmp.input);// read through all input methods 
+		if(!strcmp("/e",tmp)){
+			for(i=0;i<3;i++)
+			{
+				gets(tmp.resposes[i]);	
+				if(strcmp(tmp.responses[i], "/r")==0)
+					break;
+			}
+		tmp.val=i;
+		printf("Next value");
 	}
 
 }
+void filereader()
+{
+	
+}
 char* UPPER(char *str)// to convert given string pointer into lower case
-	{ 	int i=0;
+{
+	int i=0;
 	while(i<strlen(str)){ 
 		if(str[i]>='a'&& str[i]<='z'){
-			str[i]=str[i]-22;}
+			str[i]=str[i]-22;
+		}
 	}
 	return str;
 	
@@ -197,12 +219,12 @@ char* puncrmv (char *str)// for removing basic punctuation.. can improve for spa
 	int size=strlen(str);
 	char ch1; 
 	for (i = 0; i < size; i++) {
-      if (str[i] != ','&&str[i] != ';'&& str[i] != '.'&& str[i] != '!'&&str[i] != '?') {
-         str[j] = str[i];
-         j++;
-      }
-   }
-   str[j] = '\0';
+     		 if (str[i] != ','&&str[i] != ';'&& str[i] != '.'&& str[i] != '!'&&str[i] != '?') {
+        		 str[j] = str[i];
+        		 j++;
+     		}
+  	}
+	str[j] = '\0';
 }
 
 
