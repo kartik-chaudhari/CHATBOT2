@@ -1,4 +1,4 @@
-# CHATBOT2
+# CHATBOT + GAME
 BOTH THE CODES DO NOT COMPILE 
 THERE ARE 2 files.. THE CHATBOT AND THE side game on ALIEN INVASION
 THE CHATBOT is to understand the sentence you enter by categorising it word by word into segments like :Question, object, emotion, etc. The word is categorized by matching the word in an already existing database of words under each category using hash functions. Each is categorized and linked in a sequence. The sequence of categories of the input is then compared to match the existing compilation of most common questions entered (statements like hi , how are you ie: most commonly occuring statements are stored seperately and the input is first matched with these values). if not found in this database then the linked words create responses based on the words the present word is linked to. This behaves like a neural network . 
