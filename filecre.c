@@ -1,14 +1,14 @@
 #include<stdio.h>
-int WordDatasize[9]={6,3,3,4,2,2,2,3,3};
+int WordDatasize[9]={6,5,4,5,3,3,3,4,4};
 char *objects[]= {"DUMMY","CAR","BOTTLE","PEN","MOVIES","BARS"};
-char *actions[]={"CALCULATE", "PLAY","MUTE"};
-char *emotions[]={"SAD","HAPPY","LIKE"};
-char* questions[]={"WHAT","WHERE","WHY","HOW"};
-char* syst[]={"YOU","YOUR"};
-char * user[]={"MY","IM"};
-char* negate[]={"DONT","NOT" };
-char* join[] ={"AND","BECAUSE","OR"};
-char *connectors[]={"IS", "ARE","WITH"};
+char *actions[]={"DUMMY","CALCULATE","BROWSER", "PLAY","MUTE"};
+char *emotions[]={"DUMMY","SAD","HAPPY","LIKE"};
+char* questions[]={"DUMMY","WHAT","WHERE","WHY","HOW"};
+char* syst[]={"DUMMY","YOU","YOUR"};
+char * user[]={"DUMMY","MY","IM"};
+char* negate[]={"DUMMY","DONT","NOT" };
+char* join[] ={"DUMMY","AND","BECAUSE","OR"};
+char *connectors[]={"DUMMY","IS", "ARE","WITH"};
 char **points[9];
 
 void wordloader(){

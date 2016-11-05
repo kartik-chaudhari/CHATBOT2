@@ -56,6 +56,8 @@ void printcateg(categwords temp);
 wordnode* wordlearn(char *word);
 char * trim(char *str);
 int max(int j);
+void Action( int j);
+void pripoints();
 char *sInput,*sPreviousInput,*sResponse;
 int nselection, baseno, prevnselection;
 enum botstate {UNDER,NUNDER,PROGEND,REPEAT,NOINPUT,CONVER};
@@ -114,14 +116,16 @@ void wordfilewri() {
 	FILE *fp;
 	fp = fopen("wordbase1.txt","w+");
 	int i, j;
-
+	printf("%d",WordDatasize[0] );
 	for(i = 0; i < 9; i++)
 		fprintf(fp,"%d ", WordDatasize[i]);
-	for(i = 0; i < 9; i++)
-		for(j = 0;j < WordDatasize[i]; j++){
+	for(i = 0; i < 9; i++){
+		fprintf(fp,"%s ", "DUMMY");
+		for(j = 1;j < WordDatasize[i]; j++){
 			fprintf(fp,"%s ", points[i][j]);
-			printf("%s ", points[i][j]);
 		}
+	}	
+	fclose(fp);
 }
 
 
@@ -131,6 +135,8 @@ void wordfilere(){
 	FILE *fp;
 	fp= fopen("wordbase1.txt","r");
 	int i,j;
+	char *temp;
+	temp = (char*)malloc(sizeof(char)*15);
 	for(i=0;i<9;i++){
 		fscanf(fp,"%d ", &WordDatasize[i]);
 	}
@@ -138,9 +144,11 @@ void wordfilere(){
 		points[i]= (char ** )malloc(sizeof(char *));
 		for(j=0;j<WordDatasize[i];j++){
 			points[i][j]=(char * )malloc(sizeof(char )*15);
-			fscanf(fp,"%s", points[i][j]);	
+			fscanf(fp,"%s ", points[i][j]);	
 		}
+		
 	}
+	fclose(fp);
 }
 
 
@@ -166,8 +174,33 @@ void Knowledgefileread(){
 	}
 	fclose(fp);
 }
+void Knowledgeprint(){
+int i,j;
+printf("in");
+for(i = 0; i< nKnowledgeBaseSize;i++){
+		printf("infd");
+		printf("%d val ",KnowledgeBase[i].val );
+		printf("%d ind ",KnowledgeBase[i].lastindex );
+		printf("%s\n",KnowledgeBase[i].input);
+		for(j=0; j<KnowledgeBase[i].val;j++){
+			printf("%s\n",KnowledgeBase[i].responses[j]);
+		}
+	}
 
 
+}
+
+
+void matfilecre() {
+// for writing the matrix into a file everytime it is called
+	FILE *fp;
+	int i,j;
+	fp= fopen("matrix.txt", "w+");
+	for(i=0;i<MAX*9;i++)
+		for(j=0;j<MAX*9; j++)
+			fprintf(fp, "%d " , 0);
+			
+}
 
 void matfilew() {
 // for writing the matrix into a file everytime it is called
@@ -198,22 +231,29 @@ void input(){
 /* function responsible for the input of a file
 	*trimming the input of excessive initial or terminal spaces
 	*converting input into upper case to generalize operations on it
-*/
+*/	
 	printf("\nUSER >");
+	//printf("input 1");
+	//getchar();
     	fgets(sInput,30,stdin);
     	trim(sInput);
     	printf("\nBOT >");
     	UPPER(sInput);
+
 }
+
+
 void speech(char *str){
 // responsible for voice while outputing
 	if(speechs==ON){
-	
 		char temp[80];
 		sprintf(temp,"espeak \"%s\"",str);
 		system(temp);
 	}
 }
+
+
+
 int output() {// FIX THE FIRST FEW NUMBERS AT SPECIFIC INPUTS LIKE SIGN ON AND NO INPUT TO MAKE IT EASIER TO HANDLE
 	char *temp;
 	if(strncmp(sPreviousInput, sInput,strlen(sInput)-1)==0){
@@ -232,6 +272,8 @@ int output() {// FIX THE FIRST FEW NUMBERS AT SPECIFIC INPUTS LIKE SIGN ON AND N
     		return 0;
     	}
     	else {
+    		if(KnowledgeBase[baseno].val<1||KnowledgeBase[baseno].val>4)
+    			Knowledgefileread();
     		nselection= random()% KnowledgeBase[baseno].val;
     		if(KnowledgeBase[baseno].val >1){
     			if(nselection ==  KnowledgeBase[baseno].lastindex) 
@@ -246,8 +288,9 @@ int output() {// FIX THE FIRST FEW NUMBERS AT SPECIFIC INPUTS LIKE SIGN ON AND N
 	}
 }
 
-int keyword(char* input, char *wrd)// THIS ACTS AS A TOKENIZER// do it using word by word scanning from beginning itself// or use strtok for this
-{ 	
+
+
+int keyword(char* input, char *wrd) {// THIS ACTS AS A TOKENIZER// do it using word by word scanning from beginning itself// or use strtok for this
 	static int i = 0;
 	int c = 0;
 	int prev;
@@ -268,6 +311,8 @@ int keyword(char* input, char *wrd)// THIS ACTS AS A TOKENIZER// do it using wor
 	i=0;
 	return 1;	
 }
+
+
 char * trim(char *str) {
 	int beg=0, end;
 	
@@ -334,9 +379,9 @@ int find_match(char* input) {
 
 char * convert(){
 	//for manipulation of string to convert from one user to system and vice versa
-	char * newstr= (char *)malloc(sizeof(char)*45);
+	char * newstr= (char *)malloc(sizeof(char)*64);
 	int i;
-	strcpy(newstr, sInput);
+printf("convert"); getchar();	strcpy(newstr, sInput);
 	for(i=0;i<nconv; i++) {
 		newstr= insertspace(newstr);
 		if(strstr(newstr,conversion[i].from)!= NULL) {
@@ -359,11 +404,15 @@ char *stringreplace(char *str, char *orig, char *rep){
 	printf("%s\n",p);
 	strncpy(buffer, str, p-str);
 	buffer[p-str] = '\0';
-	printf("IN replace");
+
 	sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
 	printf("%s",buffer);
 	return buffer;
 }
+
+
+
+
 char * insertspace(char * str){
 	int i;
 	char temp;
@@ -387,9 +436,12 @@ void printcateg(categwords temp) {
 		p=p->next;
 	}
 }
+
+
+
 void findavailable(){
 /* for finding available options with highest summation value 
-	*a new list is created containg the prospective outputs
+	*a new list is created containg the possible outputs
 	*/
 	wordnode *p,*p1,*p2,*temp1;
 	p = categinput.head;
@@ -397,21 +449,24 @@ void findavailable(){
 	int index1, j, i, index2;
 	printf("\n");
 	while(p!= NULL) {
+		
 		index1 = p->cat*128 + p->index;
 		for(j=0; j < MAX*9 ; j++){
+			if(j%128==0)
+				continue;
 			sum[j] += a[index1][j];
 		}
 		p = p->next;
 	}
 	p2= categoutput.head;
-	for(j=0;j<9;j++){
+	for(j = 0; j < 9; j++){
 		temp1= (wordnode *)malloc(sizeof(wordnode));
 		
-		if(j==0){
+		if(j == 0){
 			 categoutput.head = temp1;
 			 p2= temp1;
 		}
-		if(j>0){
+		else{
 			p2->next=temp1;
 		}		
 		index2 = max(j);
@@ -419,11 +474,46 @@ void findavailable(){
 		temp1->cat = j;
 		temp1->key= (char *)malloc(sizeof(char )*15);
 		temp1->next =NULL;
+//printf("findavailable sc %d %d",j, index2);
+//printf("%s !!%s",temp1->key,points[j][index2]);
+//getchar();
 		strcpy(temp1->key,points[j][index2]);
+//printf("after strcpy");
+//getchar();
 		
 	}
 	printcateg(categoutput);
 }
+
+
+
+void pripoints(){
+	int i,j;
+	for(i=0;i<9;i++){
+		for(j = 1; j < WordDatasize[i]; j++){
+			printf("%s",points[i][j]);
+		}
+	}
+}
+
+
+
+void Action( int j){
+	if(j==2){
+		char *str = (char*)malloc(sizeof(char)*45);
+		char *temp= (char*)malloc(sizeof(char)*64);
+		keyword(sInput,str);
+		sprintf(temp,"x-www-browser %s",str);
+		system(temp);
+		exit(1);
+	}
+	if(j==4){
+		speechs=OFF;		
+	}
+}
+
+
+
 int categorize(char* str, wordnode* temp){
 //a function used to categorize the word entered and return it back
 	char cat;
@@ -431,16 +521,20 @@ int categorize(char* str, wordnode* temp){
 	static int e = 0;
 	//printf("In categorize");
 	for(c = 0; c < 9; c++) {// takes care if word is present in database
-		for(j=0;j < WordDatasize[c];j++){
+		for(j=1;j < WordDatasize[c];j++){
 			if(strcmp(points[c][j],str)==0){
 				temp->cat= c;
 				temp->index= j;
+				if(c==1){
+					Action(j);
+				}
 				return c;
 			}
 		}
 	}
 	return -1;
 }
+
 
 
 
@@ -477,6 +571,8 @@ void inputanalyze(){
 		else{
 			temp->key= (char *)malloc(sizeof(char)*15);
 			temp->next =NULL;
+//printf("input analyze sc");
+//getchar();
 			strcpy(temp->key,word);
 		}
 		count++ ;
@@ -484,8 +580,11 @@ void inputanalyze(){
 			break; 
 		p = temp;
 			
-	}	
+	}//printf("cheack;%s ",points[0][0] );	
 }
+
+
+
 
 void inputstate() {
 //to categorize given input on the basis of different structures of sentences (function not in use)
@@ -513,6 +612,7 @@ void inputstate() {
 }
 
 
+
 void sentcat() {
 // for creating output based on type of structure of sentence.(only one case handled here) 
 	int i,flag;
@@ -537,6 +637,8 @@ void sentcat() {
 	}
 }
 
+
+
 void addlink(){
 //to create a link in the adjacency matrix between the words (function not in use)
 	int h1, h2;
@@ -558,6 +660,7 @@ void addlink(){
 }
 
 
+
 double costfunction(rank temp1, rank temp2, double sum1, double sum2) {
 //for finding out how far given output is from desired output while training
 	// calls in restructuring to adapt to desired output
@@ -574,11 +677,13 @@ double costfunction(rank temp1, rank temp2, double sum1, double sum2) {
 
 
 
+
 void inclink(rank temp1,rank temp2){
 //presently chosen to be a linear function for a link in the adjacency matrix
 	a[temp1.cat*128+ temp1.index][temp2.cat*128+ temp2.index]+=1;
 	a[temp2.cat*128+ temp2.index][temp1.cat*128+ temp1.index]+=1;
 }
+
 
 
 
@@ -618,9 +723,9 @@ wordnode* wordlearn(char *word){
 int max(int j) {
 //for finding the maximum element in an array
 	double max1;
-	int indexmax=0, i;
-	max1 = sum[ j*128];
-	for(i = 0; i < 128; i++){
+	int indexmax=1, i;
+	max1 = sum[ j*128 +1];
+	for(i = 1; i < 128; i++){
 		if(max1 > sum[j*128 + i]) {
 			indexmax = i;
 			max1 = sum[j*128 + i];
@@ -645,19 +750,28 @@ void neuralinit(){
 int main(int argc, char *argv[]) {
 	if(argc==2){
 		if(strcmp(argv[1],"-l")==0){
+			printf("in");
+			getchar();
 			wordfilere();
+			printf("ien");
+			getchar();
 			matfiler();
 			while(1){
 				printf("Please enter the sentence to be learned\n");
-				sInput = (char*) malloc(sizeof(char)*45);
+				sInput = (char*) malloc(sizeof(char)*64);
 				fgets(sInput,45,stdin);
 				UPPER(sInput);
+													printf("1 %s\n",points[0][1]);
 				trim(sInput);
+				
 				if(strncmp(sInput, "END",3)==0) {
 					matfilew();
+					printf("E1 %s\n",points[0][0]);
 					wordfilewri();
+					printf("E2 %s\n",points[0][0]);
 					return 0;	
 				}
+												
 				inputanalyze();
 				printcateg( categinput);
 				addlink();
@@ -667,7 +781,8 @@ int main(int argc, char *argv[]) {
 			}
 		}
 		if(strcmp(argv[1],"-h")==0){
-			printf("Usage :./helpbot \n\t'-l' learning new statements. \n-ck to clear the adjacency matrix. ");
+			printf("Usage :./helpbot \n\t'-l' learning new statements. \n-ck to clear the adjacency matrix. \nWhile adding and categorizing new words, we use the values corresponding to thecategory as follows : \nObject 0  \nAction 1 \nEmotion 2 \nQuestion 3  \nSystem 4 \nUser 5 \nNegate 6 \nJoin 7\nConnector 8");
+			return 0;
 		}
 		if(strcmp(argv[1],"-ck")==0){
 			neuralinit();
@@ -682,7 +797,6 @@ int main(int argc, char *argv[]) {
 	sInput=(char *)malloc(sizeof(char)*64);
 	pthread_t thread1;
 	sPreviousInput= (char *)malloc(sizeof(char)*64);
-   // responses=(char *)malloc(sizeof(char)*30);
    	speechs =ON;
    	Knowledgefileread();
    	wordfilere();
@@ -693,12 +807,11 @@ int main(int argc, char *argv[]) {
    	
 	char *temp = "HI";
 	speech(temp);
-	printf("%s",temp);
+	printf("BOT >%s",temp);
 	int randm;
 	while(1){
 		input();
 	    	if (strcmp(sInput,"\0")==0) {
-		
 			temp = "DID I LEAVE YOU SPEECHLESS";
 			speech(temp);
 			printf("%s",temp);
@@ -706,8 +819,14 @@ int main(int argc, char *argv[]) {
 			continue;
 		}
 		else if(strncmp(sInput, "BYE",3)==0){
+printf("BYE CONDITION");
+getchar();
    			state = PROGEND;
+   			printf("1");
+   			getchar();
    			matfilew();
+   			printf("2");
+   			getchar();
 			wordfilewri();
 			temp="BYE";
 			speech(temp);
@@ -717,14 +836,14 @@ int main(int argc, char *argv[]) {
     		}
 		
 		baseno = find_match(sInput);
-	    	if(baseno ==-1){
-	    		inputanalyze();
-			findavailable();
-			
+		if(baseno ==-1){
+	    		inputanalyze();	
+			findavailable();	
 	    		categprev.head= categoutput.head;// so that program does not loose context when dependent question is asked
-	     	}	
-	    	else 
+	     	}
+	     	else{	
 	    		output();
+	      	}
 	    	prevstate = state;
 	    	if(state==PROGEND){
 	    		matfilew();
